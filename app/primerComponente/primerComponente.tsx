@@ -61,12 +61,7 @@ const PrimerComponente = () => {
   useEffect(() => {
     if (backgroundRef.current && contenedor.current) {
       const width = window.innerWidth;
-      const height = contenedor.current.clientHeight;
-      const res =
-        (1 -
-          (scrollPosition !== 0 ? scrollPosition : 1) /
-            (height - window.innerHeight)) *
-        100;
+
       const hue = Math.floor((x / width) * 360);
 
       // Ajuste del gradiente según el dispositivo
@@ -109,7 +104,7 @@ const PrimerComponente = () => {
   // Este effect solo se ejecuta una vez al montar el componente
   useEffect(() => {
     // Guardamos todas las instancias de ScrollTrigger para limpiarlas después
-    let scrollTriggers: any[] = [];
+    const scrollTriggers: (globalThis.ScrollTrigger | undefined)[] = [];
 
     // Configuración de animaciones basada en el tamaño de pantalla
     const animationDuration = isMobile ? 0.7 : 1;
@@ -235,11 +230,11 @@ const PrimerComponente = () => {
     // Usamos la opción scrub con ScrollTrigger para que la opacidad cambie gradualmente según el scroll
 
     // Primera fila de iconos - visible entre 30% y 55%
-    const fila1Anim = gsap.fromTo(
+    gsap.fromTo(
       recuadro5ref.current,
       { opacity: 0, y: 50 },
       {
-        opacity: (i, target) => {
+        opacity: (_i, target) => {
           // Creamos dos ScrollTriggers, uno para aparecer y otro para desaparecer
           ScrollTrigger.create({
             trigger: contenedor.current,
@@ -275,11 +270,11 @@ const PrimerComponente = () => {
     );
 
     // Segunda fila de iconos - visible entre 35% y 57%
-    const fila2Anim = gsap.fromTo(
+    gsap.fromTo(
       recuadro6ref.current,
       { opacity: 0, y: 50 },
       {
-        opacity: (i, target) => {
+        opacity: (_i, target) => {
           ScrollTrigger.create({
             trigger: contenedor.current,
             start: "25% top",
@@ -312,11 +307,11 @@ const PrimerComponente = () => {
     );
 
     // Tercera fila de iconos - visible entre 40% y 59%
-    const fila3Anim = gsap.fromTo(
+    gsap.fromTo(
       recuadro7ref.current,
       { opacity: 0, y: 50 },
       {
-        opacity: (i, target) => {
+        opacity: (_i, target) => {
           ScrollTrigger.create({
             trigger: contenedor.current,
             start: "30% top",
@@ -367,6 +362,28 @@ const PrimerComponente = () => {
       }
     );
     scrollTriggers.push(box1Anim.scrollTrigger);
+
+    // Asegurarnos de que box2Ref2 tenga una animación si existe
+    if (box2Ref2 && box2Ref2.current) {
+      const box2Anim = gsap.fromTo(
+        box2Ref2.current,
+        {
+          opacity: 0,
+          y: 0,
+        },
+        {
+          opacity: 1,
+          y: isMobile ? -50 : -100,
+          duration: animationDuration,
+          scrollTrigger: {
+            trigger: contenedor.current,
+            start: "25% bottom",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+      scrollTriggers.push(box2Anim.scrollTrigger);
+    }
 
     // Animaciones para títulos - más eficientes y adaptadas a móviles
     const titleAnimations = [
