@@ -13,34 +13,36 @@ import {
 } from "../hook/useWindowSize";
 
 const PrimerComponente = () => {
-  // Estos ref son de el archivo Iconos
-  const box1Ref = useRef(null);
-  const box2Ref = useRef(null);
-  const box3Ref = useRef(null);
+  const box1Ref = useRef<HTMLDivElement>(null);
+  const box2Ref = useRef<HTMLDivElement>(null);
+  const box3Ref = useRef<HTMLDivElement>(null);
 
   // Estos ref son del archivo titulo
-  const titleRef1 = useRef(null);
-  const titleRef2 = useRef(null);
-  const titleRef3 = useRef(null);
-  const titleRef4 = useRef(null);
+  const titleRef1 = useRef<HTMLHeadingElement>(null);
+  const titleRef2 = useRef<HTMLHeadingElement>(null);
+  const titleRef3 = useRef<HTMLHeadingElement>(null);
+  const titleRef4 = useRef<HTMLHeadingElement>(null);
 
   // Estos ref son de el archivo Presentacion
-  const box1Ref2 = useRef(null);
-  const box2Ref2 = useRef(null);
-  const recuadro1ref = useRef(null);
-  const recuadro2ref = useRef(null);
-  const recuadro3ref = useRef(null);
-  const recuadro4ref = useRef(null);
-  const recuadro5ref = useRef(null);
-  const recuadro6ref = useRef(null);
-  const recuadro7ref = useRef(null);
-  const primerTitulo = useRef(null);
-  const segundoTitulo = useRef(null);
-  const tercerTitulo = useRef(null);
-  const cuartoTitulo = useRef(null);
-  const tituloDos = useRef(null);
-  const primerExperiencia = useRef(null);
-  const segundaExperiencia = useRef(null);
+
+  const box1Ref2 = useRef<HTMLDivElement>(null);
+  const box2Ref2 = useRef<HTMLDivElement>(null);
+  const recuadro1ref = useRef<HTMLDivElement>(null);
+  const recuadro2ref = useRef<HTMLDivElement>(null);
+  const recuadro3ref = useRef<HTMLDivElement>(null);
+  const recuadro4ref = useRef<HTMLDivElement>(null);
+  const recuadro5ref = useRef<HTMLDivElement>(null);
+  const recuadro6ref = useRef<HTMLDivElement>(null);
+  const recuadro7ref = useRef<HTMLDivElement>(null);
+
+  const primerTitulo = useRef<HTMLHeadingElement>(null);
+  const segundoTitulo = useRef<HTMLHeadingElement>(null);
+  const tercerTitulo = useRef<HTMLHeadingElement>(null);
+  const cuartoTitulo = useRef<HTMLHeadingElement>(null);
+  const tituloDos = useRef<HTMLHeadingElement>(null);
+
+  const primerExperiencia = useRef<HTMLDivElement>(null);
+  const segundaExperiencia = useRef<HTMLDivElement>(null);
 
   gsap.registerPlugin(ScrollTrigger);
 
@@ -59,6 +61,12 @@ const PrimerComponente = () => {
   useEffect(() => {
     if (backgroundRef.current && contenedor.current) {
       const width = window.innerWidth;
+      const height = contenedor.current.clientHeight;
+      const res =
+        (1 -
+          (scrollPosition !== 0 ? scrollPosition : 1) /
+            (height - window.innerHeight)) *
+        100;
       const hue = Math.floor((x / width) * 360);
 
       // Ajuste del gradiente según el dispositivo
@@ -101,7 +109,7 @@ const PrimerComponente = () => {
   // Este effect solo se ejecuta una vez al montar el componente
   useEffect(() => {
     // Guardamos todas las instancias de ScrollTrigger para limpiarlas después
-    let scrollTriggers = [];
+    let scrollTriggers: any[] = [];
 
     // Configuración de animaciones basada en el tamaño de pantalla
     const animationDuration = isMobile ? 0.7 : 1;
@@ -227,10 +235,118 @@ const PrimerComponente = () => {
     // Usamos la opción scrub con ScrollTrigger para que la opacidad cambie gradualmente según el scroll
 
     // Primera fila de iconos - visible entre 30% y 55%
+    const fila1Anim = gsap.fromTo(
+      recuadro5ref.current,
+      { opacity: 0, y: 50 },
+      {
+        opacity: (i, target) => {
+          // Creamos dos ScrollTriggers, uno para aparecer y otro para desaparecer
+          ScrollTrigger.create({
+            trigger: contenedor.current,
+            start: "20% top",
+            end: "35% top",
+            scrub: true,
+            onUpdate: (self) => {
+              // Aparece gradualmente
+              target.style.opacity = self.progress;
+              target.style.transform = `translateY(${
+                50 * (1 - self.progress)
+              }px)`;
+            },
+          });
+
+          const disappearTrigger = ScrollTrigger.create({
+            trigger: contenedor.current,
+            start: "55% top",
+            end: "60% top",
+            scrub: true,
+            onUpdate: (self) => {
+              // Desaparece gradualmente
+              target.style.transform = `translateY(-${50 * self.progress}px)`;
+              target.style.opacity = 1 - self.progress;
+            },
+          });
+
+          scrollTriggers.push(disappearTrigger);
+          return 0; // El valor inicial es 0, las actualizaciones se manejan con onUpdate
+        },
+        duration: 0, // No necesitamos duración ya que controlamos todo con scrub
+      }
+    );
 
     // Segunda fila de iconos - visible entre 35% y 57%
+    const fila2Anim = gsap.fromTo(
+      recuadro6ref.current,
+      { opacity: 0, y: 50 },
+      {
+        opacity: (i, target) => {
+          ScrollTrigger.create({
+            trigger: contenedor.current,
+            start: "25% top",
+            end: "40% top",
+            scrub: true,
+            onUpdate: (self) => {
+              target.style.opacity = self.progress;
+              target.style.transform = `translateY(${
+                50 * (1 - self.progress)
+              }px)`;
+            },
+          });
+
+          const disappearTrigger = ScrollTrigger.create({
+            trigger: contenedor.current,
+            start: "57% top",
+            end: "62% top",
+            scrub: true,
+            onUpdate: (self) => {
+              target.style.transform = `translateY(-${50 * self.progress}px)`;
+              target.style.opacity = 1 - self.progress;
+            },
+          });
+
+          scrollTriggers.push(disappearTrigger);
+          return 0;
+        },
+        duration: 0,
+      }
+    );
 
     // Tercera fila de iconos - visible entre 40% y 59%
+    const fila3Anim = gsap.fromTo(
+      recuadro7ref.current,
+      { opacity: 0, y: 50 },
+      {
+        opacity: (i, target) => {
+          ScrollTrigger.create({
+            trigger: contenedor.current,
+            start: "30% top",
+            end: "45% top",
+            scrub: true,
+            onUpdate: (self) => {
+              target.style.opacity = self.progress;
+              target.style.transform = `translateY(-${50 * self.progress}px)`;
+              target.style.transform = `translateY(${
+                50 * (1 - self.progress)
+              }px)`;
+            },
+          });
+
+          const disappearTrigger = ScrollTrigger.create({
+            trigger: contenedor.current,
+            start: "59% top",
+            end: "64% top",
+            scrub: true,
+            onUpdate: (self) => {
+              target.style.opacity = 1 - self.progress;
+            },
+          });
+
+          scrollTriggers.push(disappearTrigger);
+          return 0;
+        },
+        duration: 0,
+      }
+    );
 
     // Animación para el box1Ref2
     const box1Anim = gsap.fromTo(
