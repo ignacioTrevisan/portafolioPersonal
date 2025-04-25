@@ -106,7 +106,7 @@ const Presentacion = ({
           </div>
         </div>
       </div>
-      <div className="tech-icons-container w-full md:w-auto" ref={box2Ref}>
+      <div className="tech-icons-container w-full md:w-auto " ref={box2Ref}>
         {/* Primera fila de iconos - recuadro5ref */}
         <div
           className="tech-icons-row flex flex-wrap justify-center gap-2 md:gap-4 opacity-0 mb-4"
