@@ -1,0 +1,195 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: white;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #6B107B;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-poppins);
+  -webkit-tap-highlight-color: transparent; /* Evita el highlight en móviles al tocar */
+  overflow-x: hidden; /* Evita scroll horizontal en móviles */
+}
+
+.web {
+  animation: animacionColor 2s 2s forwards;
+  color: white;
+}
+
+@keyframes animacionColor {
+  from {
+    color: white;
+  }
+  to {
+    color: #6B107B;
+  }
+}
+
+.tituloEscrito {
+  display: block;
+  white-space: nowrap;
+  border-right: 4px solid;
+  width: 0ch;
+  animation: typing 1s 1s steps(16) forwards, blink .5s 1s infinite step-end alternate;
+  overflow: hidden;
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 16ch }
+}
+
+@keyframes blink {
+  50% { border-color: transparent }
+}
+
+.tech-icons-container {
+  width: 100%;
+  padding: 2rem 0;
+}
+
+.tech-icons-row {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.tech-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.tech-icon span {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.tech-icon:hover {
+  transform: translateY(-5px);
+}
+
+/* Colores personalizados para los iconos */
+.tech-icon:nth-child(1) svg {
+  color: #61dafb; /* React */
+}
+
+.tech-icon:nth-child(2) svg {
+  color: #000000; /* Next.js */
+}
+
+.tech-icon:nth-child(3) svg {
+  color: #61dafb; /* React Native */
+}
+
+.tech-icon:nth-child(4) svg {
+  color: #339933; /* Node.js */
+}
+
+.tech-icon:nth-child(5) svg {
+  color: #4479A1; /* SQL */
+}
+
+/* Mejoras de responsive */
+@media (max-width: 768px) {
+  .tech-icons-row {
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  
+  .tech-icon {
+    width: 25%;
+  }
+  
+  /* Optimizaciones para dispositivos móviles */
+  .tituloEscrito {
+    font-size: 0.9rem;
+  }
+  
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 16ch }
+  }
+}
+
+/* Ajustes adicionales para pantallas muy pequeñas */
+@media (max-width: 640px) {
+  .tech-icons-row {
+    gap: 1rem;
+  }
+  
+  .tech-icon {
+    width: 30%;
+  }
+  
+  .tech-icon span {
+    font-size: 0.75rem;
+  }
+  
+  /* Reducir el espacio en pantallas pequeñas */
+  .tech-icons-container {
+    padding: 1rem 0;
+  }
+  
+  .tech-icons-row {
+    margin-bottom: 1rem;
+  }
+  
+  /* Ajuste para animación de escritura en móviles */
+  .tituloEscrito {
+    font-size: 0.8rem;
+  }
+}
+
+/* Asegurar que el cursor personalizado no se muestre en dispositivos táctiles */
+@media (hover: none) {
+  .cursor-none {
+    cursor: default !important;
+  }
+}
+
+/* Optimizaciones para orientación landscape en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+ 
+  
+  .tech-icons-container {
+    padding: 0.5rem 0;
+  }
+  
+  .tech-icons-row {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Mejoras para pantallas de alta densidad */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .tech-icon svg {
+    filter: drop-shadow(0 0 1px rgba(255,255,255,0.1));
+  }
+}
+
+/* Añade esto a tu globals.css para solucionar el overflow horizontal */
+
+html, body {
+
+  overflow-x: hidden;
+}
