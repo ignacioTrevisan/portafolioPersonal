@@ -61,12 +61,6 @@ const PrimerComponente = () => {
   useEffect(() => {
     if (backgroundRef.current && contenedor.current) {
       const width = window.innerWidth;
-      const height = contenedor.current.clientHeight;
-      const res =
-        (1 -
-          (scrollPosition !== 0 ? scrollPosition : 1) /
-            (height - window.innerHeight)) *
-        100;
       const hue = Math.floor((x / width) * 360);
 
       // Ajuste del gradiente según el dispositivo
@@ -107,9 +101,11 @@ const PrimerComponente = () => {
   }, [x, y, scrollPosition, isMobile, isTablet]);
 
   // Este effect solo se ejecuta una vez al montar el componente
+
+  // Este effect solo se ejecuta una vez al montar el componente
   useEffect(() => {
     // Guardamos todas las instancias de ScrollTrigger para limpiarlas después
-    let scrollTriggers: any[] = [];
+    const scrollTriggers: (globalThis.ScrollTrigger | undefined)[] = [];
 
     // Configuración de animaciones basada en el tamaño de pantalla
     const animationDuration = isMobile ? 0.7 : 1;
@@ -235,118 +231,10 @@ const PrimerComponente = () => {
     // Usamos la opción scrub con ScrollTrigger para que la opacidad cambie gradualmente según el scroll
 
     // Primera fila de iconos - visible entre 30% y 55%
-    const fila1Anim = gsap.fromTo(
-      recuadro5ref.current,
-      { opacity: 0, y: 50 },
-      {
-        opacity: (i, target) => {
-          // Creamos dos ScrollTriggers, uno para aparecer y otro para desaparecer
-          ScrollTrigger.create({
-            trigger: contenedor.current,
-            start: "20% top",
-            end: "35% top",
-            scrub: true,
-            onUpdate: (self) => {
-              // Aparece gradualmente
-              target.style.opacity = self.progress;
-              target.style.transform = `translateY(${
-                50 * (1 - self.progress)
-              }px)`;
-            },
-          });
-
-          const disappearTrigger = ScrollTrigger.create({
-            trigger: contenedor.current,
-            start: "55% top",
-            end: "60% top",
-            scrub: true,
-            onUpdate: (self) => {
-              // Desaparece gradualmente
-              target.style.transform = `translateY(-${50 * self.progress}px)`;
-              target.style.opacity = 1 - self.progress;
-            },
-          });
-
-          scrollTriggers.push(disappearTrigger);
-          return 0; // El valor inicial es 0, las actualizaciones se manejan con onUpdate
-        },
-        duration: 0, // No necesitamos duración ya que controlamos todo con scrub
-      }
-    );
 
     // Segunda fila de iconos - visible entre 35% y 57%
-    const fila2Anim = gsap.fromTo(
-      recuadro6ref.current,
-      { opacity: 0, y: 50 },
-      {
-        opacity: (i, target) => {
-          ScrollTrigger.create({
-            trigger: contenedor.current,
-            start: "25% top",
-            end: "40% top",
-            scrub: true,
-            onUpdate: (self) => {
-              target.style.opacity = self.progress;
-              target.style.transform = `translateY(${
-                50 * (1 - self.progress)
-              }px)`;
-            },
-          });
-
-          const disappearTrigger = ScrollTrigger.create({
-            trigger: contenedor.current,
-            start: "57% top",
-            end: "62% top",
-            scrub: true,
-            onUpdate: (self) => {
-              target.style.transform = `translateY(-${50 * self.progress}px)`;
-              target.style.opacity = 1 - self.progress;
-            },
-          });
-
-          scrollTriggers.push(disappearTrigger);
-          return 0;
-        },
-        duration: 0,
-      }
-    );
 
     // Tercera fila de iconos - visible entre 40% y 59%
-    const fila3Anim = gsap.fromTo(
-      recuadro7ref.current,
-      { opacity: 0, y: 50 },
-      {
-        opacity: (i, target) => {
-          ScrollTrigger.create({
-            trigger: contenedor.current,
-            start: "30% top",
-            end: "45% top",
-            scrub: true,
-            onUpdate: (self) => {
-              target.style.opacity = self.progress;
-              target.style.transform = `translateY(-${50 * self.progress}px)`;
-              target.style.transform = `translateY(${
-                50 * (1 - self.progress)
-              }px)`;
-            },
-          });
-
-          const disappearTrigger = ScrollTrigger.create({
-            trigger: contenedor.current,
-            start: "59% top",
-            end: "64% top",
-            scrub: true,
-            onUpdate: (self) => {
-              target.style.opacity = 1 - self.progress;
-            },
-          });
-
-          scrollTriggers.push(disappearTrigger);
-          return 0;
-        },
-        duration: 0,
-      }
-    );
 
     // Animación para el box1Ref2
     const box1Anim = gsap.fromTo(
@@ -367,6 +255,28 @@ const PrimerComponente = () => {
       }
     );
     scrollTriggers.push(box1Anim.scrollTrigger);
+
+    // Asegurarnos de que box2Ref2 tenga una animación si existe
+    if (box2Ref2 && box2Ref2.current) {
+      const box2Anim = gsap.fromTo(
+        box2Ref2.current,
+        {
+          opacity: 0,
+          y: 0,
+        },
+        {
+          opacity: 1,
+          y: isMobile ? -50 : -100,
+          duration: animationDuration,
+          scrollTrigger: {
+            trigger: contenedor.current,
+            start: "25% bottom",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+      scrollTriggers.push(box2Anim.scrollTrigger);
+    }
 
     // Animaciones para títulos - más eficientes y adaptadas a móviles
     const titleAnimations = [
