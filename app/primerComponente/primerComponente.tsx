@@ -449,6 +449,52 @@ const PrimerComponente = () => {
       scrollTriggers.push(recuadrosFadeIn.scrollTrigger);
     }
 
+    // Recuadros 5-7 fade in - ajustados para móviles
+    const techIconsRowsFadeIn = gsap.fromTo(
+      [recuadro5ref.current, recuadro6ref.current, recuadro7ref.current],
+      {
+        opacity: 0,
+        y: isMobile ? 50 : 100,
+      },
+      {
+        opacity: 1,
+        y: 0,
+        duration: animationDuration,
+        stagger: staggerTime,
+        scrollTrigger: {
+          trigger: contenedor.current,
+          start: isMobile ? "33% bottom" : "37% bottom",
+          toggleActions: "play none none reverse", // Cambiado para solo reproducir una vez y revertir
+        },
+      }
+    );
+    if (techIconsRowsFadeIn.scrollTrigger) {
+      scrollTriggers.push(techIconsRowsFadeIn.scrollTrigger);
+    }
+
+    // Recuadros 5-7 fade out - ajustados para móviles
+    const techIconsRowsFadeOut = gsap.fromTo(
+      [recuadro5ref.current, recuadro6ref.current, recuadro7ref.current],
+      {
+        opacity: 1,
+        y: 0,
+      },
+      {
+        opacity: 0,
+        y: isMobile ? -50 : -100,
+        duration: animationDuration,
+        stagger: staggerTime,
+        scrollTrigger: {
+          trigger: contenedor.current,
+          start: isMobile ? "68% bottom" : "72% bottom",
+          toggleActions: "play none none reverse", // Cambiado para solo reproducir una vez y revertir
+        },
+      }
+    );
+    if (techIconsRowsFadeOut.scrollTrigger) {
+      scrollTriggers.push(techIconsRowsFadeOut.scrollTrigger);
+    }
+
     // ENTRADA DE LA SECCION EXPERIENCIAS - ajustada para móviles
     const tituloExp = gsap.fromTo(
       tituloDos.current,
@@ -621,9 +667,6 @@ const PrimerComponente = () => {
           segundoTitulo={segundoTitulo}
           tercerTitulo={tercerTitulo}
           cuartoTitulo={cuartoTitulo}
-          tituloDos={tituloDos}
-          primerExperiencia={primerExperiencia}
-          segundaExperiencia={segundaExperiencia}
         />
 
         <div className="absolute w-full h-full flex flex-col items-center px-4 md:px-0">

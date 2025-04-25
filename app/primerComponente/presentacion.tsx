@@ -27,15 +27,10 @@ interface Props {
   recuadro5ref: RefObject<HTMLDivElement | null>;
   recuadro6ref: RefObject<HTMLDivElement | null>;
   recuadro7ref: RefObject<HTMLDivElement | null>;
-
-  primerTitulo: RefObject<HTMLHeadingElement | null>;
-  segundoTitulo: RefObject<HTMLHeadingElement | null>;
-  tercerTitulo: RefObject<HTMLHeadingElement | null>;
-  cuartoTitulo: RefObject<HTMLHeadingElement | null>;
-  tituloDos: RefObject<HTMLHeadingElement | null>;
-
-  primerExperiencia: RefObject<HTMLDivElement | null>;
-  segundaExperiencia: RefObject<HTMLDivElement | null>;
+  primerTitulo: RefObject<HTMLHeadElement | null>;
+  segundoTitulo: RefObject<HTMLHeadElement | null>;
+  tercerTitulo: RefObject<HTMLHeadElement | null>;
+  cuartoTitulo: RefObject<HTMLHeadElement | null>;
 }
 
 const Presentacion = ({
