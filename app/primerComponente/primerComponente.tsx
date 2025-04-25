@@ -3,9 +3,7 @@ import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import Titulo from "./titulo";
 import Iconos from "./iconos";
-import ScrollTrigger, {
-  ScrollTrigger as ScrollTriggerType,
-} from "gsap/ScrollTrigger";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Presentacion from "./presentacion";
 // Importamos los custom hooks
 import {
@@ -16,36 +14,33 @@ import {
 
 const PrimerComponente = () => {
   // Estos ref son de el archivo Iconos
-  const box1Ref = useRef<HTMLDivElement>(null);
-  const box2Ref = useRef<HTMLDivElement>(null);
-  const box3Ref = useRef<HTMLDivElement>(null);
+  const box1Ref = useRef(null);
+  const box2Ref = useRef(null);
+  const box3Ref = useRef(null);
 
   // Estos ref son del archivo titulo
-  const titleRef1 = useRef<HTMLHeadingElement>(null);
-  const titleRef2 = useRef<HTMLHeadingElement>(null);
-  const titleRef3 = useRef<HTMLHeadingElement>(null);
-  const titleRef4 = useRef<HTMLHeadingElement>(null);
+  const titleRef1 = useRef(null);
+  const titleRef2 = useRef(null);
+  const titleRef3 = useRef(null);
+  const titleRef4 = useRef(null);
 
   // Estos ref son de el archivo Presentacion
-
-  const box1Ref2 = useRef<HTMLDivElement>(null);
-  const box2Ref2 = useRef<HTMLDivElement>(null);
-  const recuadro1ref = useRef<HTMLDivElement>(null);
-  const recuadro2ref = useRef<HTMLDivElement>(null);
-  const recuadro3ref = useRef<HTMLDivElement>(null);
-  const recuadro4ref = useRef<HTMLDivElement>(null);
-  const recuadro5ref = useRef<HTMLDivElement>(null);
-  const recuadro6ref = useRef<HTMLDivElement>(null);
-  const recuadro7ref = useRef<HTMLDivElement>(null);
-
-  const primerTitulo = useRef<HTMLHeadingElement>(null);
-  const segundoTitulo = useRef<HTMLHeadingElement>(null);
-  const tercerTitulo = useRef<HTMLHeadingElement>(null);
-  const cuartoTitulo = useRef<HTMLHeadingElement>(null);
-  const tituloDos = useRef<HTMLHeadingElement>(null);
-
-  const primerExperiencia = useRef<HTMLDivElement>(null);
-  const segundaExperiencia = useRef<HTMLDivElement>(null);
+  const box1Ref2 = useRef(null);
+  const box2Ref2 = useRef(null);
+  const recuadro1ref = useRef(null);
+  const recuadro2ref = useRef(null);
+  const recuadro3ref = useRef(null);
+  const recuadro4ref = useRef(null);
+  const recuadro5ref = useRef(null);
+  const recuadro6ref = useRef(null);
+  const recuadro7ref = useRef(null);
+  const primerTitulo = useRef(null);
+  const segundoTitulo = useRef(null);
+  const tercerTitulo = useRef(null);
+  const cuartoTitulo = useRef(null);
+  const tituloDos = useRef(null);
+  const primerExperiencia = useRef(null);
+  const segundaExperiencia = useRef(null);
 
   gsap.registerPlugin(ScrollTrigger);
 
@@ -103,9 +98,10 @@ const PrimerComponente = () => {
     }
   }, [x, y, scrollPosition, isMobile, isTablet]);
 
+  // Este effect solo se ejecuta una vez al montar el componente
   useEffect(() => {
-    // Define proper type for ScrollTrigger instances
-    const scrollTriggers: ScrollTriggerType[] = [];
+    // Guardamos todas las instancias de ScrollTrigger para limpiarlas después
+    let scrollTriggers = [];
 
     // Configuración de animaciones basada en el tamaño de pantalla
     const animationDuration = isMobile ? 0.7 : 1;
@@ -142,7 +138,7 @@ const PrimerComponente = () => {
         },
       }
     );
-    if (nombreAnim.scrollTrigger) scrollTriggers.push(nombreAnim.scrollTrigger);
+    scrollTriggers.push(nombreAnim.scrollTrigger);
 
     // Iconos
     const iconosAnim = gsap.fromTo(
@@ -170,7 +166,7 @@ const PrimerComponente = () => {
         },
       }
     );
-    if (iconosAnim.scrollTrigger) scrollTriggers.push(iconosAnim.scrollTrigger);
+    scrollTriggers.push(iconosAnim.scrollTrigger);
 
     // Títulos
     const titulosAnim = gsap.fromTo(
@@ -203,8 +199,7 @@ const PrimerComponente = () => {
         },
       }
     );
-    if (titulosAnim.scrollTrigger)
-      scrollTriggers.push(titulosAnim.scrollTrigger);
+    scrollTriggers.push(titulosAnim.scrollTrigger);
 
     // Cursor
     if (!isMobile && cursorBorderRef.current) {
@@ -225,9 +220,17 @@ const PrimerComponente = () => {
           },
         }
       );
-      if (cursorAnim.scrollTrigger)
-        scrollTriggers.push(cursorAnim.scrollTrigger);
+      scrollTriggers.push(cursorAnim.scrollTrigger);
     }
+
+    // SOLUCIÓN MEJORADA PARA recuadro5ref, recuadro6ref, recuadro7ref
+    // Usamos la opción scrub con ScrollTrigger para que la opacidad cambie gradualmente según el scroll
+
+    // Primera fila de iconos - visible entre 30% y 55%
+
+    // Segunda fila de iconos - visible entre 35% y 57%
+
+    // Tercera fila de iconos - visible entre 40% y 59%
 
     // Animación para el box1Ref2
     const box1Anim = gsap.fromTo(
@@ -247,7 +250,7 @@ const PrimerComponente = () => {
         },
       }
     );
-    if (box1Anim.scrollTrigger) scrollTriggers.push(box1Anim.scrollTrigger);
+    scrollTriggers.push(box1Anim.scrollTrigger);
 
     // Animaciones para títulos - más eficientes y adaptadas a móviles
     const titleAnimations = [
@@ -292,8 +295,7 @@ const PrimerComponente = () => {
           },
         }
       );
-      if (fadeOutAnim.scrollTrigger)
-        scrollTriggers.push(fadeOutAnim.scrollTrigger);
+      scrollTriggers.push(fadeOutAnim.scrollTrigger);
 
       const experienciaOut = gsap.fromTo(
         [
@@ -316,8 +318,7 @@ const PrimerComponente = () => {
           },
         }
       );
-      if (experienciaOut.scrollTrigger)
-        scrollTriggers.push(experienciaOut.scrollTrigger);
+      scrollTriggers.push(experienciaOut.scrollTrigger);
 
       // Fade in animation
       const fadeInAnim = gsap.fromTo(
@@ -338,8 +339,7 @@ const PrimerComponente = () => {
           },
         }
       );
-      if (fadeInAnim.scrollTrigger)
-        scrollTriggers.push(fadeInAnim.scrollTrigger);
+      scrollTriggers.push(fadeInAnim.scrollTrigger);
     });
 
     // Recuadros fade out - ajustados para móviles
@@ -365,8 +365,7 @@ const PrimerComponente = () => {
         },
       }
     );
-    if (recuadrosFadeOut.scrollTrigger)
-      scrollTriggers.push(recuadrosFadeOut.scrollTrigger);
+    scrollTriggers.push(recuadrosFadeOut.scrollTrigger);
 
     // Recuadros 1-4 fade in - ajustados para móviles
     const recuadrosFadeIn = gsap.fromTo(
@@ -392,8 +391,7 @@ const PrimerComponente = () => {
         },
       }
     );
-    if (recuadrosFadeIn.scrollTrigger)
-      scrollTriggers.push(recuadrosFadeIn.scrollTrigger);
+    scrollTriggers.push(recuadrosFadeIn.scrollTrigger);
 
     // ENTRADA DE LA SECCION EXPERIENCIAS - ajustada para móviles
     const tituloExp = gsap.fromTo(
@@ -414,7 +412,7 @@ const PrimerComponente = () => {
         },
       }
     );
-    if (tituloExp.scrollTrigger) scrollTriggers.push(tituloExp.scrollTrigger);
+    scrollTriggers.push(tituloExp.scrollTrigger);
 
     // Experiencias - adaptadas para móviles
     const primerExpFadeIn = gsap.fromTo(
@@ -435,8 +433,7 @@ const PrimerComponente = () => {
         },
       }
     );
-    if (primerExpFadeIn.scrollTrigger)
-      scrollTriggers.push(primerExpFadeIn.scrollTrigger);
+    scrollTriggers.push(primerExpFadeIn.scrollTrigger);
 
     const segundaExp = gsap.fromTo(
       segundaExperiencia.current,
@@ -456,7 +453,7 @@ const PrimerComponente = () => {
         },
       }
     );
-    if (segundaExp.scrollTrigger) scrollTriggers.push(segundaExp.scrollTrigger);
+    scrollTriggers.push(segundaExp.scrollTrigger);
 
     // Limpieza de las animaciones cuando el componente se desmonta
     return () => {
