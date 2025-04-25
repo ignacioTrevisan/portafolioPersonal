@@ -61,7 +61,12 @@ const PrimerComponente = () => {
   useEffect(() => {
     if (backgroundRef.current && contenedor.current) {
       const width = window.innerWidth;
-
+      const height = contenedor.current.clientHeight;
+      const res =
+        (1 -
+          (scrollPosition !== 0 ? scrollPosition : 1) /
+            (height - window.innerHeight)) *
+        100;
       const hue = Math.floor((x / width) * 360);
 
       // Ajuste del gradiente según el dispositivo
@@ -100,6 +105,8 @@ const PrimerComponente = () => {
       );
     }
   }, [x, y, scrollPosition, isMobile, isTablet]);
+
+  // Este effect solo se ejecuta una vez al montar el componente
 
   // Este effect solo se ejecuta una vez al montar el componente
   useEffect(() => {
@@ -230,11 +237,11 @@ const PrimerComponente = () => {
     // Usamos la opción scrub con ScrollTrigger para que la opacidad cambie gradualmente según el scroll
 
     // Primera fila de iconos - visible entre 30% y 55%
-    gsap.fromTo(
+    const fila1Anim = gsap.fromTo(
       recuadro5ref.current,
       { opacity: 0, y: 50 },
       {
-        opacity: (_i, target) => {
+        opacity: (i, target) => {
           // Creamos dos ScrollTriggers, uno para aparecer y otro para desaparecer
           ScrollTrigger.create({
             trigger: contenedor.current,
@@ -270,11 +277,11 @@ const PrimerComponente = () => {
     );
 
     // Segunda fila de iconos - visible entre 35% y 57%
-    gsap.fromTo(
+    const fila2Anim = gsap.fromTo(
       recuadro6ref.current,
       { opacity: 0, y: 50 },
       {
-        opacity: (_i, target) => {
+        opacity: (i, target) => {
           ScrollTrigger.create({
             trigger: contenedor.current,
             start: "25% top",
@@ -307,11 +314,11 @@ const PrimerComponente = () => {
     );
 
     // Tercera fila de iconos - visible entre 40% y 59%
-    gsap.fromTo(
+    const fila3Anim = gsap.fromTo(
       recuadro7ref.current,
       { opacity: 0, y: 50 },
       {
-        opacity: (_i, target) => {
+        opacity: (i, target) => {
           ScrollTrigger.create({
             trigger: contenedor.current,
             start: "30% top",
