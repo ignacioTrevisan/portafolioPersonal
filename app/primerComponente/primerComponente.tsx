@@ -14,33 +14,36 @@ import {
 
 const PrimerComponente = () => {
   // Estos ref son de el archivo Iconos
-  const box1Ref = useRef(null);
-  const box2Ref = useRef(null);
-  const box3Ref = useRef(null);
+  const box1Ref = useRef<HTMLDivElement>(null);
+  const box2Ref = useRef<HTMLDivElement>(null);
+  const box3Ref = useRef<HTMLDivElement>(null);
 
   // Estos ref son del archivo titulo
-  const titleRef1 = useRef(null);
-  const titleRef2 = useRef(null);
-  const titleRef3 = useRef(null);
-  const titleRef4 = useRef(null);
+  const titleRef1 = useRef<HTMLHeadingElement>(null);
+  const titleRef2 = useRef<HTMLHeadingElement>(null);
+  const titleRef3 = useRef<HTMLHeadingElement>(null);
+  const titleRef4 = useRef<HTMLHeadingElement>(null);
 
   // Estos ref son de el archivo Presentacion
-  const box1Ref2 = useRef(null);
-  const box2Ref2 = useRef(null);
-  const recuadro1ref = useRef(null);
-  const recuadro2ref = useRef(null);
-  const recuadro3ref = useRef(null);
-  const recuadro4ref = useRef(null);
-  const recuadro5ref = useRef(null);
-  const recuadro6ref = useRef(null);
-  const recuadro7ref = useRef(null);
-  const primerTitulo = useRef(null);
-  const segundoTitulo = useRef(null);
-  const tercerTitulo = useRef(null);
-  const cuartoTitulo = useRef(null);
-  const tituloDos = useRef(null);
-  const primerExperiencia = useRef(null);
-  const segundaExperiencia = useRef(null);
+
+  const box1Ref2 = useRef<HTMLDivElement>(null);
+  const box2Ref2 = useRef<HTMLDivElement>(null);
+  const recuadro1ref = useRef<HTMLDivElement>(null);
+  const recuadro2ref = useRef<HTMLDivElement>(null);
+  const recuadro3ref = useRef<HTMLDivElement>(null);
+  const recuadro4ref = useRef<HTMLDivElement>(null);
+  const recuadro5ref = useRef<HTMLDivElement>(null);
+  const recuadro6ref = useRef<HTMLDivElement>(null);
+  const recuadro7ref = useRef<HTMLDivElement>(null);
+
+  const primerTitulo = useRef<HTMLHeadingElement>(null);
+  const segundoTitulo = useRef<HTMLHeadingElement>(null);
+  const tercerTitulo = useRef<HTMLHeadingElement>(null);
+  const cuartoTitulo = useRef<HTMLHeadingElement>(null);
+  const tituloDos = useRef<HTMLHeadingElement>(null);
+
+  const primerExperiencia = useRef<HTMLDivElement>(null);
+  const segundaExperiencia = useRef<HTMLDivElement>(null);
 
   gsap.registerPlugin(ScrollTrigger);
 
@@ -51,34 +54,61 @@ const PrimerComponente = () => {
 
   const nombre = useRef(null);
   const backgroundRef = useRef<HTMLDivElement | null>(null);
-  const cursorRef = useRef(null);
+  const cursorRef = useRef<HTMLDivElement | null>(null);
   const cursorBorderRef = useRef(null);
   const contenedor = useRef<HTMLDivElement>(null);
 
+  // Effect para el mouse y background
   // Effect para el mouse y background
   useEffect(() => {
     if (backgroundRef.current && contenedor.current) {
       const width = window.innerWidth;
       const height = contenedor.current.clientHeight;
-      const res =
-        (1 -
-          (scrollPosition !== 0 ? scrollPosition : 1) /
-            (height - window.innerHeight)) *
-        100;
       const hue = Math.floor((x / width) * 360);
+
+      // Calculamos la opacidad del fondo basada en la posición del scroll
+      // Queremos que comience a desvanecerse cuando llegue aproximadamente al 85% del scroll
+      const startFadePoint = 0.85;
+      const scrollPercentage = scrollPosition / (height - window.innerHeight);
+
+      // Calculamos la opacidad: 1 hasta startFadePoint, luego va de 1 a 0
+      let opacity = 1;
+      if (scrollPercentage > startFadePoint) {
+        // Normalizar el valor entre startFadePoint y 1
+        const fadeProgress =
+          (scrollPercentage - startFadePoint) / (1 - startFadePoint);
+        // Invertir para que vaya de 1 a 0
+        opacity = 1 - fadeProgress;
+      }
 
       // Ajuste del gradiente según el dispositivo
       const gradientSize = isMobile ? "300px" : isTablet ? "500px" : "700px";
 
       backgroundRef.current.style.background = `radial-gradient(
-        circle ${gradientSize} at ${x}px ${y}px,
-        hsla(${hue}, 0%, 100%, 0.4),
-        hsla(${hue + 60}, 0%, 100%, 0.1)
-      )`;
+      circle ${gradientSize} at ${x}px ${y}px,
+      hsla(${hue}, 0%, 100%, ${0.4 * opacity}),
+      hsla(${hue + 60}, 0%, 100%, ${0.1 * opacity})
+    )`;
     }
 
     // Solo aplicamos efectos de cursor en dispositivos no móviles
     if (!isMobile && cursorBorderRef.current && cursorRef.current) {
+      // Calculamos la opacidad del cursor basada en la posición del scroll
+      const height =
+        contenedor.current?.clientHeight || window.innerHeight * 7.5;
+      const startFadePoint = 0.85;
+      const scrollPercentage = scrollPosition / (height - window.innerHeight);
+
+      let cursorOpacity = 1;
+      if (scrollPercentage > startFadePoint) {
+        const fadeProgress =
+          (scrollPercentage - startFadePoint) / (1 - startFadePoint);
+        cursorOpacity = 1 - fadeProgress;
+      }
+
+      // Aplicamos opacidad al cursor
+      cursorRef.current.style.opacity = `cursorOpacity * 0.3`; // Mantiene la transparencia relativa
+
       gsap.to([cursorBorderRef.current, cursorRef.current], {
         duration: (index) => (index === 0 ? 1 : 0),
         left: (index) => (index === 0 ? x : x + 8),
@@ -91,7 +121,7 @@ const PrimerComponente = () => {
         {
           duration: 1,
           scale: 1,
-          opacity: 1,
+          opacity: cursorOpacity,
           ease: "power3.out",
         },
         {
@@ -107,7 +137,7 @@ const PrimerComponente = () => {
   // Este effect solo se ejecuta una vez al montar el componente
   useEffect(() => {
     // Guardamos todas las instancias de ScrollTrigger para limpiarlas después
-    let scrollTriggers = [];
+    const scrollTriggers: globalThis.ScrollTrigger[] | undefined = [];
 
     // Configuración de animaciones basada en el tamaño de pantalla
     const animationDuration = isMobile ? 0.7 : 1;
@@ -144,7 +174,9 @@ const PrimerComponente = () => {
         },
       }
     );
-    scrollTriggers.push(nombreAnim.scrollTrigger);
+    if (nombreAnim.scrollTrigger) {
+      scrollTriggers.push(nombreAnim.scrollTrigger);
+    }
 
     // Iconos
     const iconosAnim = gsap.fromTo(
@@ -172,7 +204,9 @@ const PrimerComponente = () => {
         },
       }
     );
-    scrollTriggers.push(iconosAnim.scrollTrigger);
+    if (iconosAnim.scrollTrigger) {
+      scrollTriggers.push(iconosAnim.scrollTrigger);
+    }
 
     // Títulos
     const titulosAnim = gsap.fromTo(
@@ -205,7 +239,9 @@ const PrimerComponente = () => {
         },
       }
     );
-    scrollTriggers.push(titulosAnim.scrollTrigger);
+    if (titulosAnim.scrollTrigger) {
+      scrollTriggers.push(titulosAnim.scrollTrigger);
+    }
 
     // Cursor
     if (!isMobile && cursorBorderRef.current) {
@@ -226,125 +262,19 @@ const PrimerComponente = () => {
           },
         }
       );
-      scrollTriggers.push(cursorAnim.scrollTrigger);
+      if (cursorAnim.scrollTrigger) {
+        scrollTriggers.push(cursorAnim.scrollTrigger);
+      }
     }
 
     // SOLUCIÓN MEJORADA PARA recuadro5ref, recuadro6ref, recuadro7ref
     // Usamos la opción scrub con ScrollTrigger para que la opacidad cambie gradualmente según el scroll
 
     // Primera fila de iconos - visible entre 30% y 55%
-    const fila1Anim = gsap.fromTo(
-      recuadro5ref.current,
-      { opacity: 0, y: 50 },
-      {
-        opacity: (i, target) => {
-          // Creamos dos ScrollTriggers, uno para aparecer y otro para desaparecer
-          ScrollTrigger.create({
-            trigger: contenedor.current,
-            start: "20% top",
-            end: "35% top",
-            scrub: true,
-            onUpdate: (self) => {
-              // Aparece gradualmente
-              target.style.opacity = self.progress;
-              target.style.transform = `translateY(${
-                50 * (1 - self.progress)
-              }px)`;
-            },
-          });
-
-          const disappearTrigger = ScrollTrigger.create({
-            trigger: contenedor.current,
-            start: "55% top",
-            end: "60% top",
-            scrub: true,
-            onUpdate: (self) => {
-              // Desaparece gradualmente
-              target.style.transform = `translateY(-${50 * self.progress}px)`;
-              target.style.opacity = 1 - self.progress;
-            },
-          });
-
-          scrollTriggers.push(disappearTrigger);
-          return 0; // El valor inicial es 0, las actualizaciones se manejan con onUpdate
-        },
-        duration: 0, // No necesitamos duración ya que controlamos todo con scrub
-      }
-    );
 
     // Segunda fila de iconos - visible entre 35% y 57%
-    const fila2Anim = gsap.fromTo(
-      recuadro6ref.current,
-      { opacity: 0, y: 50 },
-      {
-        opacity: (i, target) => {
-          ScrollTrigger.create({
-            trigger: contenedor.current,
-            start: "25% top",
-            end: "40% top",
-            scrub: true,
-            onUpdate: (self) => {
-              target.style.opacity = self.progress;
-              target.style.transform = `translateY(${
-                50 * (1 - self.progress)
-              }px)`;
-            },
-          });
-
-          const disappearTrigger = ScrollTrigger.create({
-            trigger: contenedor.current,
-            start: "57% top",
-            end: "62% top",
-            scrub: true,
-            onUpdate: (self) => {
-              target.style.transform = `translateY(-${50 * self.progress}px)`;
-              target.style.opacity = 1 - self.progress;
-            },
-          });
-
-          scrollTriggers.push(disappearTrigger);
-          return 0;
-        },
-        duration: 0,
-      }
-    );
 
     // Tercera fila de iconos - visible entre 40% y 59%
-    const fila3Anim = gsap.fromTo(
-      recuadro7ref.current,
-      { opacity: 0, y: 50 },
-      {
-        opacity: (i, target) => {
-          ScrollTrigger.create({
-            trigger: contenedor.current,
-            start: "30% top",
-            end: "45% top",
-            scrub: true,
-            onUpdate: (self) => {
-              target.style.opacity = self.progress;
-              target.style.transform = `translateY(-${50 * self.progress}px)`;
-              target.style.transform = `translateY(${
-                50 * (1 - self.progress)
-              }px)`;
-            },
-          });
-
-          const disappearTrigger = ScrollTrigger.create({
-            trigger: contenedor.current,
-            start: "59% top",
-            end: "64% top",
-            scrub: true,
-            onUpdate: (self) => {
-              target.style.opacity = 1 - self.progress;
-            },
-          });
-
-          scrollTriggers.push(disappearTrigger);
-          return 0;
-        },
-        duration: 0,
-      }
-    );
 
     // Animación para el box1Ref2
     const box1Anim = gsap.fromTo(
@@ -364,7 +294,9 @@ const PrimerComponente = () => {
         },
       }
     );
-    scrollTriggers.push(box1Anim.scrollTrigger);
+    if (box1Anim.scrollTrigger) {
+      scrollTriggers.push(box1Anim.scrollTrigger);
+    }
 
     // Animaciones para títulos - más eficientes y adaptadas a móviles
     const titleAnimations = [
@@ -409,7 +341,9 @@ const PrimerComponente = () => {
           },
         }
       );
-      scrollTriggers.push(fadeOutAnim.scrollTrigger);
+      if (fadeOutAnim.scrollTrigger) {
+        scrollTriggers.push(fadeOutAnim.scrollTrigger);
+      }
 
       const experienciaOut = gsap.fromTo(
         [
@@ -432,7 +366,9 @@ const PrimerComponente = () => {
           },
         }
       );
-      scrollTriggers.push(experienciaOut.scrollTrigger);
+      if (experienciaOut.scrollTrigger) {
+        scrollTriggers.push(experienciaOut.scrollTrigger);
+      }
 
       // Fade in animation
       const fadeInAnim = gsap.fromTo(
@@ -453,7 +389,9 @@ const PrimerComponente = () => {
           },
         }
       );
-      scrollTriggers.push(fadeInAnim.scrollTrigger);
+      if (fadeInAnim.scrollTrigger) {
+        scrollTriggers.push(fadeInAnim.scrollTrigger);
+      }
     });
 
     // Recuadros fade out - ajustados para móviles
@@ -479,7 +417,9 @@ const PrimerComponente = () => {
         },
       }
     );
-    scrollTriggers.push(recuadrosFadeOut.scrollTrigger);
+    if (recuadrosFadeOut.scrollTrigger) {
+      scrollTriggers.push(recuadrosFadeOut.scrollTrigger);
+    }
 
     // Recuadros 1-4 fade in - ajustados para móviles
     const recuadrosFadeIn = gsap.fromTo(
@@ -505,7 +445,9 @@ const PrimerComponente = () => {
         },
       }
     );
-    scrollTriggers.push(recuadrosFadeIn.scrollTrigger);
+    if (recuadrosFadeIn.scrollTrigger) {
+      scrollTriggers.push(recuadrosFadeIn.scrollTrigger);
+    }
 
     // ENTRADA DE LA SECCION EXPERIENCIAS - ajustada para móviles
     const tituloExp = gsap.fromTo(
@@ -526,7 +468,9 @@ const PrimerComponente = () => {
         },
       }
     );
-    scrollTriggers.push(tituloExp.scrollTrigger);
+    if (tituloExp.scrollTrigger) {
+      scrollTriggers.push(tituloExp.scrollTrigger);
+    }
 
     // Experiencias - adaptadas para móviles
     const primerExpFadeIn = gsap.fromTo(
@@ -547,7 +491,9 @@ const PrimerComponente = () => {
         },
       }
     );
-    scrollTriggers.push(primerExpFadeIn.scrollTrigger);
+    if (primerExpFadeIn.scrollTrigger) {
+      scrollTriggers.push(primerExpFadeIn.scrollTrigger);
+    }
 
     const segundaExp = gsap.fromTo(
       segundaExperiencia.current,
@@ -567,7 +513,9 @@ const PrimerComponente = () => {
         },
       }
     );
-    scrollTriggers.push(segundaExp.scrollTrigger);
+    if (segundaExp.scrollTrigger) {
+      scrollTriggers.push(segundaExp.scrollTrigger);
+    }
 
     // Limpieza de las animaciones cuando el componente se desmonta
     return () => {
@@ -648,8 +596,8 @@ const PrimerComponente = () => {
 
         <Iconos box1Ref={box1Ref} box2Ref={box2Ref} box3Ref={box3Ref} />
         <Titulo
-          titleRef1={titleRef1}
-          titleRef2={titleRef2}
+          titleRef2={titleRef1}
+          titleRef1={titleRef2}
           titleRef3={titleRef3}
           titleRef4={titleRef4}
         />
@@ -673,6 +621,9 @@ const PrimerComponente = () => {
           segundoTitulo={segundoTitulo}
           tercerTitulo={tercerTitulo}
           cuartoTitulo={cuartoTitulo}
+          tituloDos={tituloDos}
+          primerExperiencia={primerExperiencia}
+          segundaExperiencia={segundaExperiencia}
         />
 
         <div className="absolute w-full h-full flex flex-col items-center px-4 md:px-0">
