@@ -7,10 +7,12 @@ import ContactoComponente from "./finalDePagina/finalDePagina";
 export default function Home() {
   return (
     <>
+      {/* <ClientComponent> */}
       <PrimerComponente />
       <SegundoComponente />
       <ProyectosComponente />
       <ContactoComponente />
+      {/* </ClientComponent> */}
     </>
   );
 }

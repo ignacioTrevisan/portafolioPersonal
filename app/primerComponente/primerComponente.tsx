@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import Titulo from "./titulo";
 import Iconos from "./iconos";
@@ -13,6 +13,9 @@ import {
 } from "../hook/useWindowSize";
 
 const PrimerComponente = () => {
+  // Estado para controlar la visibilidad inicial
+  const [isLoaded, setIsLoaded] = useState(false);
+
   const box1Ref = useRef<HTMLDivElement>(null);
   const box2Ref = useRef<HTMLDivElement>(null);
   const box3Ref = useRef<HTMLDivElement>(null);
@@ -60,8 +63,10 @@ const PrimerComponente = () => {
   // Variable para controlar la opacidad del fondo y cursor
   const backgroundOpacityRef = useRef(1);
 
-  // Effect para el mouse y background
+  // Effect para el mouse y background - ahora condicionado por isLoaded
   useEffect(() => {
+    if (!isLoaded) return;
+
     if (backgroundRef.current && contenedor.current) {
       const width = window.innerWidth;
 
@@ -109,10 +114,22 @@ const PrimerComponente = () => {
         }
       );
     }
-  }, [x, y, scrollPosition, isMobile, isTablet]);
+  }, [x, y, scrollPosition, isMobile, isTablet, isLoaded]);
 
-  // Este effect solo se ejecuta una vez al montar el componente
+  // Effect para asegurar que el DOM está cargado antes de mostrar los elementos
   useEffect(() => {
+    // Establecemos un pequeño timeout para asegurar que el DOM está listo
+    const loadTimer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 300); // 300ms debería ser suficiente para que el DOM esté completamente cargado
+
+    return () => clearTimeout(loadTimer);
+  }, []);
+
+  // Este effect solo se ejecuta una vez al montar el componente y cuando isLoaded cambia a true
+  useEffect(() => {
+    if (!isLoaded) return; // No ejecutar animaciones hasta que isLoaded sea true
+
     // Guardamos todas las instancias de ScrollTrigger para limpiarlas después
     const scrollTriggers: (globalThis.ScrollTrigger | undefined)[] = [];
 
@@ -652,17 +669,20 @@ const PrimerComponente = () => {
       // También podemos limpiar todos los ScrollTriggers de este contexto
       ScrollTrigger.getAll().forEach((st) => st.kill());
     };
-  }, [isMobile, isTablet]); // Dependencias: solo cuando cambia el tipo de dispositivo
+  }, [isMobile, isTablet, isLoaded]); // Añadimos isLoaded como dependencia
 
   return (
     <div className="h-[750vh] bg-[#6B107B] w-full" ref={contenedor}>
+      {/* Aplicamos una clase de visibilidad condicionada por isLoaded */}
       <div
-        className="w-full flex flex-col justify-center items-center h-[100vh] fixed top-0"
+        className={`w-full flex flex-col justify-center items-center h-[100vh] fixed top-0 transition-opacity duration-300 ${
+          isLoaded ? "opacity-100" : "opacity-0"
+        }`}
         ref={backgroundRef}
         style={{ cursor: isMobile ? "default" : "none" }}
       >
         {/* Custom cursor solo para dispositivos no móviles */}
-        {!isMobile && (
+        {!isMobile && isLoaded && (
           <>
             <div
               ref={cursorRef}
