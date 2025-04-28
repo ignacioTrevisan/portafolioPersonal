@@ -1,6 +1,6 @@
 "use client";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { FaExternalLinkAlt, FaReact, FaNodeJs } from "react-icons/fa";
 import {
@@ -12,14 +12,17 @@ import {
 import { DiJava, DiMysql } from "react-icons/di";
 
 const ProyectosComponente = () => {
+  // Estado para controlar si las animaciones están listas
+  const [animationsReady, setAnimationsReady] = useState(false);
+
   gsap.registerPlugin(ScrollTrigger);
 
   // Referencias para las animaciones
-  const proyectosContainer = useRef(null);
-  const tituloRef = useRef(null);
-  const proyecto1Ref = useRef(null);
-  const proyecto2Ref = useRef(null);
-  const proyecto3Ref = useRef(null);
+  const proyectosContainer = useRef<HTMLDivElement | null>(null);
+  const tituloRef = useRef<HTMLHeadingElement | null>(null);
+  const proyecto1Ref = useRef<HTMLDivElement | null>(null);
+  const proyecto2Ref = useRef<HTMLDivElement | null>(null);
+  const proyecto3Ref = useRef<HTMLDivElement | null>(null);
 
   // Datos de proyectos
   const proyectos = [
@@ -76,72 +79,89 @@ const ProyectosComponente = () => {
     },
   ];
 
+  // Primero, aseguramos que todos los elementos sean visibles
   useEffect(() => {
+    // Inicializar todos los elementos con opacidad 1 por defecto
+    if (tituloRef.current) tituloRef.current.style.opacity = "1";
+    if (proyecto1Ref.current) proyecto1Ref.current.style.opacity = "1";
+    if (proyecto2Ref.current) proyecto2Ref.current.style.opacity = "1";
+    if (proyecto3Ref.current) proyecto3Ref.current.style.opacity = "1";
+
+    // Marcar que está listo para animaciones
+    setAnimationsReady(true);
+  }, []);
+
+  // Después, configuramos las animaciones
+  useEffect(() => {
+    // Solo ejecutar animaciones cuando estén listas
+    if (!animationsReady) return;
+
     // Detectamos si estamos en móvil para ajustar las animaciones
     const isMobile = window.innerWidth < 768;
     const animationDuration = isMobile ? 0.7 : 1;
     const staggerTime = isMobile ? 0.2 : 0.3;
 
-    // Animación del título
-    if (tituloRef.current) {
-      gsap.fromTo(
-        tituloRef.current,
-        {
-          y: -50,
-          opacity: 0,
-          scale: 0.8,
-        },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: animationDuration,
-          ease: "elastic.out(1, 0.5)", // Efecto de gotita
-          scrollTrigger: {
-            trigger: proyectosContainer.current,
-            start: "top 80%",
-            toggleActions: "play none none reverse",
+    // Crear un contexto para estas animaciones
+    const ctx = gsap.context(() => {
+      // Animación del título
+      if (tituloRef.current) {
+        gsap.fromTo(
+          tituloRef.current,
+          {
+            y: -50,
+            opacity: 0,
+            scale: 0.8,
           },
-        }
-      );
-    }
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: animationDuration,
+            ease: "elastic.out(1, 0.5)", // Efecto de gotita
+            scrollTrigger: {
+              trigger: proyectosContainer.current,
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+      }
 
-    // Animación de las tarjetas de proyectos con stagger
-    if (proyecto1Ref.current && proyecto2Ref.current && proyecto3Ref.current) {
-      gsap.fromTo(
-        [proyecto1Ref.current, proyecto2Ref.current, proyecto3Ref.current],
-        {
-          y: 100,
-          opacity: 0,
-          scale: 0.9,
-        },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: animationDuration * 1.2,
-          stagger: staggerTime,
-          ease: "back.out(1.7)", // Efecto rebote tipo gotita
-          scrollTrigger: {
-            trigger: proyectosContainer.current,
-            start: "top 60%",
-            toggleActions: "play none none reverse",
+      // Animación de las tarjetas de proyectos con stagger
+      if (
+        proyecto1Ref.current &&
+        proyecto2Ref.current &&
+        proyecto3Ref.current
+      ) {
+        gsap.fromTo(
+          [proyecto1Ref.current, proyecto2Ref.current, proyecto3Ref.current],
+          {
+            y: 100,
+            opacity: 0,
+            scale: 0.9,
           },
-        }
-      );
-    }
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: animationDuration * 1.2,
+            stagger: staggerTime,
+            ease: "back.out(1.7)", // Efecto rebote tipo gotita
+            scrollTrigger: {
+              trigger: proyectosContainer.current,
+              start: "top 60%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+      }
+    });
 
     // Limpieza de animaciones cuando el componente se desmonta
     return () => {
-      ScrollTrigger.getAll().forEach((st) => st.kill());
-      gsap.killTweensOf([
-        tituloRef.current,
-        proyecto1Ref.current,
-        proyecto2Ref.current,
-        proyecto3Ref.current,
-      ]);
+      ctx.revert(); // Limpia todas las animaciones creadas en este contexto
     };
-  }, []);
+  }, [animationsReady]);
 
   // Referencias para cada proyecto
   const proyectoRefs = [proyecto1Ref, proyecto2Ref, proyecto3Ref];
@@ -149,11 +169,13 @@ const ProyectosComponente = () => {
   return (
     <div
       ref={proyectosContainer}
-      className="relative w-full min-h-screen flex flex-col bg-[#6B107B] items-center px-4 md:px-10 py-16"
+      className="relative w-full min-h-screen flex flex-col bg-[#6B107B] items-center px-4 md:px-10 py-16 z-10"
+      style={{ position: "relative", zIndex: 10 }} // Asegurarnos que esté por encima del primer componente
     >
       <h1
         ref={tituloRef}
         className="text-3xl md:text-4xl lg:text-5xl font-bold mb-12 md:mb-16"
+        style={{ opacity: 1 }} // Forzar visibilidad inicial
       >
         Mis Proyectos más recientes
       </h1>
@@ -164,6 +186,7 @@ const ProyectosComponente = () => {
             key={proyecto.id}
             ref={proyectoRefs[index]}
             className="bg-[#7c2489] rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] flex flex-col"
+            style={{ opacity: 1 }} // Forzar visibilidad inicial
           >
             {/* Imagen del proyecto */}
             <div className="h-52 overflow-hidden">

@@ -57,6 +57,9 @@ const PrimerComponente = () => {
   const cursorBorderRef = useRef(null);
   const contenedor = useRef<HTMLDivElement>(null);
 
+  // Variable para controlar la opacidad del fondo y cursor
+  const backgroundOpacityRef = useRef(1);
+
   // Effect para el mouse y background
   useEffect(() => {
     if (backgroundRef.current && contenedor.current) {
@@ -67,19 +70,26 @@ const PrimerComponente = () => {
       // Ajuste del gradiente según el dispositivo
       const gradientSize = isMobile ? "300px" : isTablet ? "500px" : "700px";
 
+      // Aplicamos la opacidad usando la variable de referencia
+      const currentOpacity = backgroundOpacityRef.current;
+
       backgroundRef.current.style.background = `radial-gradient(
-        circle ${gradientSize} at ${x}px ${y}px,
-        hsla(${hue}, 0%, 100%, 0.4),
-        hsla(${hue + 60}, 0%, 100%, 0.1)
-      )`;
+          circle ${gradientSize} at ${x}px ${y}px,
+          hsla(${hue}, 0%, 100%, ${0.4 * currentOpacity}),
+          hsla(${hue + 60}, 0%, 100%, ${0.1 * currentOpacity})
+        )`;
     }
 
     // Solo aplicamos efectos de cursor en dispositivos no móviles
     if (!isMobile && cursorBorderRef.current && cursorRef.current) {
+      // Aplicamos la opacidad también al cursor
+      const currentOpacity = backgroundOpacityRef.current;
+
       gsap.to([cursorBorderRef.current, cursorRef.current], {
         duration: (index) => (index === 0 ? 1 : 0),
         left: (index) => (index === 0 ? x : x + 8),
         top: (index) => (index === 0 ? y : y + 10),
+        opacity: (index) => (index === 0 ? currentOpacity : currentOpacity),
         ease: "power3.out",
       });
 
@@ -88,7 +98,7 @@ const PrimerComponente = () => {
         {
           duration: 1,
           scale: 1,
-          opacity: 1,
+          opacity: currentOpacity,
           ease: "power3.out",
         },
         {
@@ -100,8 +110,6 @@ const PrimerComponente = () => {
       );
     }
   }, [x, y, scrollPosition, isMobile, isTablet]);
-
-  // Este effect solo se ejecuta una vez al montar el componente
 
   // Este effect solo se ejecuta una vez al montar el componente
   useEffect(() => {
@@ -227,6 +235,20 @@ const PrimerComponente = () => {
       );
       scrollTriggers.push(cursorAnim.scrollTrigger);
     }
+
+    // NUEVO: Efecto de desvanecimiento del fondo y cursor mucho antes del final
+    // para evitar ver el borde de terminación
+    const backgroundFadeEffect = ScrollTrigger.create({
+      trigger: contenedor.current,
+      start: "70% top", // Comenzamos mucho antes, al 70% del contenedor
+      end: "85% top", // Terminamos al 85% del contenedor para que esté completamente desvanecido antes del final
+      scrub: true,
+      onUpdate: (self) => {
+        // Actualizamos la opacidad en función del progreso del scroll
+        backgroundOpacityRef.current = 1 - self.progress;
+      },
+    });
+    scrollTriggers.push(backgroundFadeEffect);
 
     // SOLUCIÓN MEJORADA PARA recuadro5ref, recuadro6ref, recuadro7ref
     // Usamos la opción scrub con ScrollTrigger para que la opacidad cambie gradualmente según el scroll
@@ -448,7 +470,7 @@ const PrimerComponente = () => {
           delay: isMobile ? 0.5 : 1,
           scrollTrigger: {
             trigger: contenedor.current,
-            start: isMobile ? "90% bottom" : "94% bottom",
+            start: isMobile ? "92% bottom" : "96% bottom",
             toggleActions: "play none none reverse",
           },
         }
@@ -542,7 +564,7 @@ const PrimerComponente = () => {
         delay: isMobile ? 0.5 : 1,
         scrollTrigger: {
           trigger: contenedor.current,
-          start: isMobile ? "69% bottom" : "73% bottom",
+          start: isMobile ? "73% bottom" : "77% bottom",
           toggleActions: "play none none reverse", // Changed to only play once and reverse
         },
       }
@@ -563,7 +585,7 @@ const PrimerComponente = () => {
         delay: isMobile ? 0.5 : 1,
         scrollTrigger: {
           trigger: contenedor.current,
-          start: isMobile ? "70% bottom" : "74% bottom",
+          start: isMobile ? "74% bottom" : "78% bottom",
           toggleActions: "play none none reverse", // Changed to only play once and reverse
         },
       }
@@ -583,7 +605,7 @@ const PrimerComponente = () => {
         delay: isMobile ? 0.5 : 1,
         scrollTrigger: {
           trigger: contenedor.current,
-          start: isMobile ? "71% bottom" : "75% bottom",
+          start: isMobile ? "75% bottom" : "79% bottom",
           toggleActions: "play none none reverse", // Changed to only play once and reverse
         },
       }
